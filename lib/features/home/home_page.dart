@@ -76,7 +76,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                   Row(
                     children: [
-                      _navButton("Contact", isScrolled),
+                      _navButton("Contact", isScrolled, () {
+                         _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: const Duration(seconds: 1),
+                          curve: Curves.easeInOut,
+                        );
+                      }),
                     ],
                   )
                 ],
@@ -121,9 +127,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _navButton(String title, bool isScrolled) {
+  Widget _navButton(String title, bool isScrolled, VoidCallback onPressed) {
     return TextButton(
-      onPressed: () {},
+      onPressed: onPressed,
       child: Text(
         title,
         style: TextStyle(
@@ -611,7 +617,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               color: Colors.white
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
+          
+          // Added Contact Options in Footer
+          Wrap(
+            spacing: 20,
+            runSpacing: 20,
+            alignment: WrapAlignment.center,
+            children: [
+              TextButton.icon(
+                onPressed: () => _launchURL("https://wa.me/917907194007"),
+                icon: const Icon(Icons.chat_bubble_outline, color: Colors.white70),
+                label: const Text(
+                  "WhatsApp",
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () => _launchURL("mailto:techwithnovus@gmail.com"),
+                icon: const Icon(Icons.email_outlined, color: Colors.white70),
+                label: const Text(
+                  "Email Us",
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 40),
           Text(
             "© 2026 All Rights Reserved",
             style: TextStyle(
