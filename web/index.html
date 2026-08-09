@@ -1100,18 +1100,23 @@
       }
     }
 
-    // Smooth 60FPS Lerp Loop
+    // Smooth 60FPS Animation Loop
     function animationLoop() {
       const diff = targetFrame - currentFrame;
       if (Math.abs(diff) > 0.0001) {
-        currentFrame += diff * 0.12; // Controlled deliberate 60FPS lerp
-        renderCurrentFrame();
-
-        const smoothProgress = (currentFrame - 1) / (TOTAL_FRAMES - 1);
-        updateStageElements(smoothProgress);
+        currentFrame += diff * 0.12; // Controlled 60FPS lerp
+      } else {
+        currentFrame = targetFrame;
       }
+      
+      renderCurrentFrame();
+
+      const smoothProgress = (currentFrame - 1) / (TOTAL_FRAMES - 1);
+      updateStageElements(smoothProgress);
+
       requestAnimationFrame(animationLoop);
     }
+
 
     // Modal Helpers
     function openModal() {
