@@ -852,33 +852,19 @@
       renderCurrentFrame();
     }
 
-    // Preload All 240 WebP Frames
-    function preloadFrames() {
-      for (let i = 1; i <= TOTAL_FRAMES; i++) {
-        const img = new Image();
-        const frameStr = String(i).padStart(3, '0');
-        img.src = `assets/frames/frame_${frameStr}.webp`;
-        img.onload = () => {
-          loadedCount++;
-          const percent = Math.round((loadedCount / TOTAL_FRAMES) * 100);
-          loaderFill.style.width = percent + '%';
-          
-          if (loadedCount === 1) {
-            renderCurrentFrame();
-          }
-
-          if (loadedCount === TOTAL_FRAMES) {
-            setTimeout(() => {
-              preloader.style.opacity = '0';
-              preloader.style.visibility = 'hidden';
-            }, 300);
-          }
-        };
-        img.onerror = () => {
-          loadedCount++;
-        };
-        images[i] = img;
+    // Fast Nearest-Frame Fallback Engine
+    function getBestAvailableFrame(targetIdx) {
+      if (images[targetIdx] && images[targetIdx].complete) {
+        return images[targetIdx];
       }
+      // Search outwards for nearest available loaded frame
+      for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
+        const prev = targetIdx - offset;
+        const next = targetIdx + offset;
+        if (prev >= 1 && images[prev] && images[prev].complete) return images[prev];
+        if (next <= TOTAL_FRAMES && images[next] && images[next].complete) return images[next];
+      }
+      return null;
     }
 
     // Render Frame with Cover Aspect Ratio
@@ -908,8 +894,78 @@
 
     function renderCurrentFrame() {
       const idx = Math.min(Math.max(Math.round(currentFrame), 1), TOTAL_FRAMES);
-      drawFrame(images[idx]);
+      const img = getBestAvailableFrame(idx);
+      drawFrame(img);
     }
+
+
+    // Fast Instant-Unlock Interleaved Preloader (6 Parallel Streams)
+    function preloadFrames() {
+      const priorityQueue = [];
+      const secondaryQueue = [];
+
+      // Interleave keyframes (every 4th frame) first for fast visual coverage
+      for (let i = 1; i <= TOTAL_FRAMES; i++) {
+        if (i % 4 === 1 || i === 1 || i === TOTAL_FRAMES) {
+          priorityQueue.push(i);
+        } else {
+          secondaryQueue.push(i);
+        }
+      }
+
+      const loadQueue = [...priorityQueue, ...secondaryQueue];
+      let queueIndex = 0;
+      let initialUnlocked = false;
+
+      function unlockPage() {
+        if (!initialUnlocked) {
+          initialUnlocked = true;
+          preloader.style.opacity = '0';
+          preloader.style.visibility = 'hidden';
+          renderCurrentFrame();
+        }
+      }
+
+      function loadNextWorker() {
+        if (queueIndex >= loadQueue.length) return;
+        const frameNum = loadQueue[queueIndex++];
+        
+        const img = new Image();
+        const frameStr = String(frameNum).padStart(3, '0');
+        img.src = `assets/frames/frame_${frameStr}.webp`;
+        
+        img.onload = () => {
+          loadedCount++;
+          images[frameNum] = img;
+
+          const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
+          loaderFill.style.width = pct + '%';
+
+          // Unlock preloader instantly as soon as first 6 keyframes load!
+          if (loadedCount >= 6) {
+            unlockPage();
+          }
+
+          loadNextWorker();
+        };
+
+        img.onerror = () => {
+          loadedCount++;
+          if (loadedCount >= 6) unlockPage();
+          loadNextWorker();
+        };
+      }
+
+      // Launch 6 parallel concurrent download streams
+      const NUM_WORKERS = 6;
+      for (let w = 0; w < NUM_WORKERS; w++) {
+        loadNextWorker();
+      }
+
+      // Safety timeout: unlock after 1.5 seconds regardless
+      setTimeout(unlockPage, 1500);
+    }
+
 
     // Smooth Cubic Easing
     function easeCubic(t) {
