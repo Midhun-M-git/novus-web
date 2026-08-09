@@ -241,15 +241,16 @@
 
     /* Glassmorphism Panel */
     .glass-panel {
-      background: rgba(10, 14, 23, 0.75);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(8, 12, 20, 0.45);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 28px;
-      padding: 48px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      padding: 44px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       text-align: left;
     }
+
 
     .hero-center {
       text-align: center;
@@ -632,14 +633,17 @@
     <div class="hud-overlay">
       <!-- Stage 1 (0% - 25%) -->
       <div class="stage-card hero-center" id="stage-1">
-        <div class="badge-pill">
-          <span class="badge-dot"></span>
-          <span>PURE DYNAMIC ENGINE</span>
+        <div class="glass-panel" style="text-align: center;">
+          <div class="badge-pill">
+            <span class="badge-dot"></span>
+            <span>NEXT-GEN TECHNOLOGY AGENCY</span>
+          </div>
+          <h1 class="stage-title">Turning Vision Into<br>Digital Reality</h1>
+          <p class="stage-sub">We engineer next-gen IoT safety ecosystems, scalable web platforms, and edge AI hardware for visionary tech startups.</p>
+          <button class="cta-btn" onclick="openModal()">Explore Solutions →</button>
         </div>
-        <h1 class="stage-title">Turning Vision Into<br>Digital Reality</h1>
-        <p class="stage-sub">We engineer next-gen IoT safety ecosystems, scalable web platforms, and edge AI hardware for visionary tech startups.</p>
-        <button class="cta-btn" onclick="openModal()">Explore Solutions →</button>
       </div>
+
 
       <!-- Stage 2 (25% - 50%) -->
       <div class="stage-card" id="stage-2">
@@ -896,22 +900,24 @@
       let scale = 0.92;
 
       if (progress < inEnd) {
-        // Smooth Rise In
+        // Cubic ease rise in
         const factor = (progress - inStart) / (inEnd - inStart);
-        opacity = factor;
-        translateY = 40 * (1 - factor);
-        scale = 0.92 + 0.08 * factor;
+        const ease = factor < 0.5 ? 2 * factor * factor : 1 - Math.pow(-2 * factor + 2, 2) / 2;
+        opacity = ease;
+        translateY = 40 * (1 - ease);
+        scale = 0.92 + 0.08 * ease;
       } else if (progress <= outStart) {
         // Fully Visible & Interactive
         opacity = 1;
         translateY = 0;
         scale = 1;
       } else {
-        // Smooth Lift Out
+        // Cubic ease lift out
         const factor = (progress - outStart) / (outEnd - outStart);
-        opacity = 1 - factor;
-        translateY = -40 * factor;
-        scale = 1 - 0.08 * factor;
+        const ease = factor < 0.5 ? 2 * factor * factor : 1 - Math.pow(-2 * factor + 2, 2) / 2;
+        opacity = 1 - ease;
+        translateY = -40 * ease;
+        scale = 1 - 0.08 * ease;
       }
 
       return {
@@ -920,6 +926,22 @@
         scale: scale,
         pointerEvents: opacity > 0.4 ? 'auto' : 'none'
       };
+    }
+
+    function updateCards(smoothProgress) {
+      const cardConfigs = [
+        calculateCardTransform(smoothProgress, 0.00, 0.04, 0.16, 0.22), // Stage 1 (Hero)
+        calculateCardTransform(smoothProgress, 0.22, 0.30, 0.44, 0.52), // Stage 2 (IoT)
+        calculateCardTransform(smoothProgress, 0.52, 0.60, 0.74, 0.82), // Stage 3 (Apps)
+        calculateCardTransform(smoothProgress, 0.82, 0.90, 0.98, 1.00)  // Stage 4 (CTA)
+      ];
+
+      stageElements.forEach((el, idx) => {
+        const tf = cardConfigs[idx];
+        el.style.opacity = tf.opacity;
+        el.style.transform = `translateY(${tf.translateY}px) scale(${tf.scale})`;
+        el.style.pointerEvents = tf.pointerEvents;
+      });
     }
 
     // Scroll Handler
@@ -941,32 +963,21 @@
       } else {
         scrollHint.style.opacity = '1';
       }
-
-      // Smooth Card Scroll Interpolation Configuration
-      const cardConfigs = [
-        calculateCardTransform(progress, 0.00, 0.02, 0.16, 0.24), // Stage 1 (Hero)
-        calculateCardTransform(progress, 0.22, 0.30, 0.46, 0.54), // Stage 2 (IoT)
-        calculateCardTransform(progress, 0.52, 0.60, 0.74, 0.82), // Stage 3 (Apps)
-        calculateCardTransform(progress, 0.80, 0.88, 0.98, 1.00)  // Stage 4 (CTA)
-      ];
-
-      stageElements.forEach((el, idx) => {
-        const tf = cardConfigs[idx];
-        el.style.opacity = tf.opacity;
-        el.style.transform = `translateY(${tf.translateY}px) scale(${tf.scale})`;
-        el.style.pointerEvents = tf.pointerEvents;
-      });
     }
 
     // Smooth Lerp Animation Loop with requestAnimationFrame
     function animationLoop() {
       const diff = targetFrame - currentFrame;
-      if (Math.abs(diff) > 0.001) {
-        currentFrame += diff * 0.15; // Smooth 60FPS lerp
+      if (Math.abs(diff) > 0.0001) {
+        currentFrame += diff * 0.14; // Smooth 60FPS lerp
         renderCurrentFrame();
+        
+        const smoothProgress = (currentFrame - 1) / (TOTAL_FRAMES - 1);
+        updateCards(smoothProgress);
       }
       requestAnimationFrame(animationLoop);
     }
+
 
     // Modal Helpers
     function openModal() {
