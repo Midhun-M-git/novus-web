@@ -703,10 +703,9 @@
   <div id="scroll-container">
     <div id="canvas-wrapper">
       <canvas id="cinematic-canvas"></canvas>
-      <video id="fallback-video" src="assets/video/watermark-removed-video.mp4" autoplay loop muted playsinline style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; pointer-events: none; opacity: 1; transition: opacity 0.5s ease;"></video>
       <div class="vignette-overlay"></div>
-
     </div>
+
 
 
     <!-- Floating Canvas Typography Overlays -->
@@ -934,41 +933,27 @@
 
     // Render Frame with Cover Aspect Ratio
     function drawFrame(img) {
+      if (!img || !img.complete || img.naturalWidth === 0) return;
       const w = window.innerWidth;
       const h = window.innerHeight;
+      const imgRatio = img.naturalWidth / img.naturalHeight;
+      const screenRatio = w / h;
+      let drawW, drawH, offsetX, offsetY;
 
-      if (img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
-        const imgRatio = img.naturalWidth / img.naturalHeight;
-        const screenRatio = w / h;
-        let drawW, drawH, offsetX, offsetY;
-
-        if (screenRatio > imgRatio) {
-          drawW = w;
-          drawH = w / imgRatio;
-          offsetX = 0;
-          offsetY = (h - drawH) / 2;
-        } else {
-          drawH = h;
-          drawW = h * imgRatio;
-          offsetX = (w - drawW) / 2;
-          offsetY = 0;
-        }
-
-        ctx.clearRect(0, 0, w, h);
-        ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
-
-        // Hide fallback MP4 video once canvas draws a valid WebP frame
-        const fallbackVid = document.getElementById('fallback-video');
-        if (fallbackVid && fallbackVid.style.opacity !== '0') {
-          fallbackVid.style.opacity = '0';
-        }
+      if (screenRatio > imgRatio) {
+        drawW = w;
+        drawH = w / imgRatio;
+        offsetX = 0;
+        offsetY = (h - drawH) / 2;
       } else {
-        // Fallback: If WebP frame is not ready, make sure MP4 video background is visible!
-        const fallbackVid = document.getElementById('fallback-video');
-        if (fallbackVid) {
-          fallbackVid.style.opacity = '1';
-        }
+        drawH = h;
+        drawW = h * imgRatio;
+        offsetX = (w - drawW) / 2;
+        offsetY = 0;
       }
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
     }
 
     function renderCurrentFrame() {
@@ -977,14 +962,12 @@
       if (!img && images[1] && images[1].complete && images[1].naturalWidth > 0) {
         img = images[1];
       }
-      drawFrame(img);
+      if (img) drawFrame(img);
     }
 
-
-
-    // Fast & Bulletproof Instant Preloader Engine
+    // High-Performance WebP Preloading Engine
     function preloadFrames() {
-      // 1. Immediately load frame 1 and render it so canvas is NEVER blank
+      // 1. Immediately load frame 1 and render it instantly
       const firstFrame = new Image();
       firstFrame.src = 'assets/frames/frame_001.webp';
       firstFrame.onload = () => {
@@ -993,29 +976,18 @@
         preloader.style.opacity = '0';
         preloader.style.visibility = 'hidden';
       };
-      firstFrame.onerror = () => {
-        // Fallback to video background if WebP fails
-        const fallbackVid = document.getElementById('fallback-video');
-        if (fallbackVid) fallbackVid.style.opacity = '1';
-        preloader.style.opacity = '0';
-        preloader.style.visibility = 'hidden';
-      };
 
       // Safety unlock timeout
       setTimeout(() => {
         preloader.style.opacity = '0';
         preloader.style.visibility = 'hidden';
-        if (!images[1]) {
-          const fallbackVid = document.getElementById('fallback-video');
-          if (fallbackVid) fallbackVid.style.opacity = '1';
-        }
-      }, 600);
+      }, 500);
 
-      // 2. Preload remaining frames (2 to 240) in non-blocking batches
+      // 2. Preload all remaining frames (2 to 240) in smooth concurrent batches
       let frameCounter = 2;
       function loadNextBatch() {
         if (frameCounter > TOTAL_FRAMES) return;
-        const batchEnd = Math.min(frameCounter + 10, TOTAL_FRAMES);
+        const batchEnd = Math.min(frameCounter + 12, TOTAL_FRAMES);
 
         for (let f = frameCounter; f <= batchEnd; f++) {
           const img = new Image();
@@ -1033,11 +1005,12 @@
         }
 
         frameCounter = batchEnd + 1;
-        setTimeout(loadNextBatch, 15);
+        setTimeout(loadNextBatch, 10);
       }
 
       loadNextBatch();
     }
+
 
 
 
