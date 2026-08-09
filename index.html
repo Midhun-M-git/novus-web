@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <base href="./">
+  <meta charset="UTF-8">
+
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="NovusTech: Technology, engineered to turn ambitious ideas into real-world products.">
+  <meta name="keywords" content="NovusTech, IoT, App Development, Website Development, Hardware Engineering, Flutter, Embedded Systems">
+  <meta name="author" content="NovusTech">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://novustech.in/">
+  <meta property="og:title" content="NovusTech | Building What's Next">
+  <meta property="og:description" content="Technology, engineered to turn ambitious ideas into real-world products.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <title>NovusTech | Building What's Next</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    body {
+      background-color: #06080D;
+      color: #FFFFFF;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      width: 100vw;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sleek Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #06080D;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2563EB;
+      border-radius: 3px;
+    }
+
+    /* Preloader */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #06080D;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s ease;
+    }
+
+    .spinner-ring {
+      width: 48px;
+      height: 48px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #3B82F6;
+      border-radius: 50%;
+      animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      margin-top: 24px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #94A3B8;
+      text-transform: uppercase;
+    }
+
+    .loader-bar {
+      width: 160px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      margin-top: 14px;
+      overflow: hidden;
+    }
+
+    .loader-fill {
+      height: 100%;
+      width: 0%;
+      background: #3B82F6;
+      transition: width 0.1s linear;
+    }
+
+    /* Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 84px;
+      padding: 0 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      background: rgba(6, 8, 13, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background 0.3s ease;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: #FFFFFF;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-mark {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #3B82F6;
+      box-shadow: 0 0 12px #3B82F6;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      transition: color 0.25s ease;
+    }
+
+    .nav-link:hover {
+      color: #FFFFFF;
+    }
+
+    .cta-button {
+      background: #FFFFFF;
+      color: #06080D;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      text-decoration: none;
+    }
+
+    .cta-button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    /* Sticky Cinematic Canvas Container */
+    #scroll-container {
+      position: relative;
+      height: 550vh; /* Smooth multi-stage animation scroll track */
+      width: 100vw;
+    }
+
+    #canvas-wrapper {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    #cinematic-canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .vignette-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 55%, rgba(6, 8, 13, 0.45) 100%),
+                  linear-gradient(to bottom, rgba(6, 8, 13, 0.3) 0%, transparent 45%, rgba(6, 8, 13, 0.6) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+
+    /* Floating Canvas Typography HUD */
+    .hud-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 32px;
+    }
+
+    .stage-group {
+      position: absolute;
+      max-width: 960px;
+      width: 90%;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .stage-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #3B82F6;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      filter: blur(6px);
+      will-change: opacity, transform, filter;
+    }
+
+    .stage-headline {
+      font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      color: #FFFFFF;
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(24px);
+      filter: blur(6px);
+      will-change: opacity, transform, filter;
+    }
+
+    .stage-sub {
+      font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+      line-height: 1.6;
+      color: #94A3B8;
+      font-weight: 400;
+      max-width: 660px;
+      margin: 0 auto 36px auto;
+      opacity: 0;
+      transform: translateY(24px);
+      filter: blur(6px);
+      will-change: opacity, transform, filter;
+    }
+
+    .stage-action {
+      opacity: 0;
+      transform: translateY(24px);
+      filter: blur(6px);
+      will-change: opacity, transform, filter;
+    }
+
+    /* Subtle Minimal Action Link */
+    .hero-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 14px 32px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .hero-link:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Floating Scroll Progress Line */
+    .hud-progress {
+      position: fixed;
+      right: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+    }
+
+    .progress-track {
+      width: 2px;
+      height: 160px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 0%;
+      background: #3B82F6;
+      box-shadow: 0 0 10px #3B82F6;
+    }
+
+    /* Scroll Cue */
+    .scroll-cue {
+      position: fixed;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 100;
+      transition: opacity 0.4s ease;
+    }
+
+    .scroll-cue-text {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: rgba(255, 255, 255, 0.45);
+      text-transform: uppercase;
+    }
+
+    .scroll-cue-line {
+      width: 1px;
+      height: 24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent);
+      animation: pulseLine 2s infinite;
+    }
+
+    @keyframes pulseLine {
+      0%, 100% { transform: scaleY(1); opacity: 0.6; }
+      50% { transform: scaleY(0.4); opacity: 0.2; }
+    }
+
+    /* Editorial Content Sections Below Canvas */
+    .editorial-sections {
+      position: relative;
+      z-index: 20;
+      background: #06080D;
+    }
+
+    .section-block {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 140px 48px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .section-block:last-child {
+      border-bottom: none;
+    }
+
+    .section-num {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #3B82F6;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .section-heading {
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      color: #FFFFFF;
+      margin-bottom: 24px;
+    }
+
+    .section-body {
+      font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+      line-height: 1.65;
+      color: #94A3B8;
+      max-width: 720px;
+      font-weight: 400;
+    }
+
+    /* Grid Layouts */
+    .build-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      margin-top: 60px;
+    }
+
+    .build-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 40px;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .build-card:hover {
+      border-color: rgba(59, 130, 246, 0.4);
+      transform: translateY(-4px);
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #FFFFFF;
+      margin-bottom: 12px;
+    }
+
+    .card-desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #94A3B8;
+    }
+
+    /* Approach Stages */
+    .approach-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .step-num {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #3B82F6;
+      margin-bottom: 12px;
+    }
+
+    .step-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 10px;
+    }
+
+    .step-desc {
+      font-size: 15px;
+      color: #94A3B8;
+      line-height: 1.6;
+    }
+
+    /* Tech Stack Pills */
+    .tech-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    .tech-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #E2E8F0;
+      letter-spacing: 0.3px;
+    }
+
+    /* Footer */
+    footer {
+      padding: 60px 48px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      color: #64748B;
+      font-size: 13px;
+    }
+
+    /* Modal Dialog */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(16px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: #0B0E17;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      width: 90%;
+      max-width: 580px;
+      padding: 44px;
+      position: relative;
+      transform: scale(0.94);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.06);
+      border: none;
+      color: #94A3B8;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #FFFFFF;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .modal-btn {
+      flex: 1;
+      min-width: 200px;
+      padding: 16px 24px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-btn:hover {
+      opacity: 0.9;
+    }
+
+    .modal-btn:hover {
+      opacity: 0.9;
+    }
+
+    .whatsapp-btn {
+      background: #25D366;
+      color: #FFFFFF;
+    }
+
+    .email-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Mobile Responsive Optimization */
+    @media (max-width: 768px) {
+      header {
+        padding: 0 20px;
+        height: 70px;
+      }
+      .brand-logo span {
+        font-size: 18px;
+      }
+      .nav-center {
+        gap: 16px;
+      }
+      .nav-link {
+        font-size: 12px;
+      }
+      .cta-button {
+        padding: 8px 16px;
+        font-size: 11px;
+      }
+      .hud-overlay {
+        padding: 20px 16px;
+      }
+      .stage-headline {
+        font-size: clamp(2rem, 8vw, 3.2rem) !important;
+        letter-spacing: -1px;
+        margin-bottom: 16px;
+      }
+      .stage-sub {
+        font-size: clamp(0.95rem, 4.2vw, 1.15rem) !important;
+        margin-bottom: 24px;
+      }
+      .hud-progress {
+        right: 16px;
+      }
+      .section-block {
+        padding: 80px 24px;
+      }
+      .section-heading {
+        font-size: clamp(1.8rem, 6vw, 2.8rem);
+      }
+      .build-grid, .approach-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .build-card {
+        padding: 28px;
+      }
+      footer {
+        flex-direction: column;
+        gap: 12px;
+        padding: 40px 24px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Preloader Screen -->
+  <div id="preloader">
+    <div class="spinner-ring"></div>
+    <div class="loader-text">NOVUSTECH</div>
+    <div class="loader-bar">
+      <div class="loader-fill" id="loader-fill"></div>
+    </div>
+  </div>
+
+  <!-- Header Nav -->
+  <header>
+    <a href="#" class="brand-logo">
+      <div class="brand-mark"></div>
+      <span>NovusTech</span>
+    </a>
+    <nav class="nav-center">
+      <a href="#about" class="nav-link">About</a>
+      <a href="#what-we-build" class="nav-link">Capabilities</a>
+      <a href="#approach" class="nav-link">Approach</a>
+      <a href="#technology" class="nav-link">Stack</a>
+    </nav>
+    <button class="cta-button" onclick="openModal()">Start a conversation →</button>
+  </header>
+
+  <!-- Sticky Canvas Scroll Engine -->
+  <div id="scroll-container">
+    <div id="canvas-wrapper">
+      <canvas id="cinematic-canvas"></canvas>
+      <div class="vignette-overlay"></div>
+    </div>
+
+
+
+    <!-- Floating Canvas Typography Overlays -->
+    <div class="hud-overlay">
+      <!-- Stage 1 (0% - 25%) -->
+      <div class="stage-group" id="stage-1">
+        <h1 class="stage-headline" id="s1-headline">Turning Vision Into<br>Digital Reality</h1>
+        <p class="stage-sub" id="s1-sub">Technology, engineered to turn ambitious ideas into real-world products.</p>
+        <div class="stage-action" id="s1-act">
+          <a href="#about" class="hero-link">Explore NovusTech →</a>
+        </div>
+      </div>
+
+      <!-- Stage 2 (25% - 50%) -->
+      <div class="stage-group" id="stage-2">
+        <h2 class="stage-headline" id="s2-headline">IDEAS INTO ENGINEERED REALITY.</h2>
+        <p class="stage-sub" id="s2-sub">NovusTech develops technology solutions that move ambitious ideas from concept to implementation.</p>
+      </div>
+
+      <!-- Stage 3 (50% - 75%) -->
+      <div class="stage-group" id="stage-3">
+        <h2 class="stage-headline" id="s3-headline">SOFTWARE. SYSTEMS. INNOVATION.</h2>
+        <p class="stage-sub" id="s3-sub">Purpose-built digital products, connected hardware, and research-backed engineering designed to perform at scale.</p>
+      </div>
+
+      <!-- Stage 4 (75% - 100%) -->
+      <div class="stage-group" id="stage-4">
+        <h2 class="stage-headline" id="s4-headline">LET'S BUILD SOMETHING REAL.</h2>
+        <p class="stage-sub" id="s4-sub">Have an idea worth building? Talk directly with our engineering lead.</p>
+        <div class="stage-action" id="s4-act">
+          <button class="cta-button" style="padding: 16px 36px; font-size: 15px;" onclick="openModal()">Start a conversation →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HUD Scroll Progress Line -->
+    <div class="hud-progress">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Scroll Cue -->
+    <div class="scroll-cue" id="scroll-cue">
+      <span class="scroll-cue-text">SCROLL</span>
+      <div class="scroll-cue-line"></div>
+    </div>
+  </div>
+
+  <!-- Editorial Sections Below Canvas -->
+  <div class="editorial-sections">
+    <!-- ABOUT -->
+    <div class="section-block" id="about">
+      <h2 class="section-heading">IDEAS INTO ENGINEERED REALITY.</h2>
+      <p class="section-body">NovusTech develops technology solutions that move ambitious ideas from concept to implementation. We bridge physical hardware, mobile clients, and cloud microservices into cohesive systems built for performance and reliability.</p>
+    </div>
+
+    <!-- WHAT WE BUILD -->
+    <div class="section-block" id="what-we-build">
+      <h2 class="section-heading">ENGINEERED FOR REAL-WORLD USE.</h2>
+
+      <div class="build-grid">
+        <div class="build-card">
+          <h3 class="card-title">SOFTWARE</h3>
+          <p class="card-desc">Purpose-built digital products engineered for real-world use across mobile platforms and the web.</p>
+        </div>
+
+        <div class="build-card">
+          <h3 class="card-title">SYSTEMS</h3>
+          <p class="card-desc">Connected technology, embedded microcontrollers, and IoT sensor telemetry designed to work reliably at scale.</p>
+        </div>
+
+        <div class="build-card">
+          <h3 class="card-title">INNOVATION</h3>
+          <p class="card-desc">Research and practical engineering focused on solving meaningful, complex problems for forward-thinking teams.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPROACH -->
+    <div class="section-block" id="approach">
+      <h2 class="section-heading">THINK. ENGINEER. BUILD.</h2>
+
+      <div class="approach-grid">
+        <div>
+          <h3 class="step-title">Understand</h3>
+          <p class="step-desc">Deeply analyze the core problem before writing a single line of code or designing circuit layouts.</p>
+        </div>
+
+        <div>
+          <h3 class="step-title">Design</h3>
+          <p class="step-desc">Architect the right software stack, embedded firmware, and data pipelines built for long-term maintainability.</p>
+        </div>
+
+        <div>
+          <h3 class="step-title">Execute</h3>
+          <p class="step-desc">Turn the designed solution into a working, field-tested real-world product ready for production deployment.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TECHNOLOGY STACK -->
+    <div class="section-block" id="technology">
+      <h2 class="section-heading">PROVEN TECHNOLOGY STACK.</h2>
+      <p class="section-body">We work with established, production-tested frameworks and hardware architectures.</p>
+
+      <div class="tech-flex">
+        <span class="tech-pill">Flutter Cross-Platform</span>
+        <span class="tech-pill">Next.js Web Applications</span>
+        <span class="tech-pill">Embedded C / C++</span>
+        <span class="tech-pill">ESP32 & LoRa Telemetry</span>
+        <span class="tech-pill">Python Cloud Backend</span>
+        <span class="tech-pill">Serverless & Microservices</span>
+      </div>
+    </div>
+
+    <!-- FINAL CTA -->
+    <div class="section-block" id="contact" style="text-align: center; border-bottom: none; padding: 160px 48px;">
+      <h2 class="section-heading" style="margin: 0 auto 24px auto;">LET'S BUILD SOMETHING REAL.</h2>
+      <p class="section-body" style="margin: 0 auto 40px auto;">Have an idea worth building?</p>
+      <button class="cta-button" style="padding: 18px 40px; font-size: 15px;" onclick="openModal()">Start a conversation →</button>
+    </div>
+  </div>
+
+
+  <!-- Footer -->
+  <footer>
+    <span>NovusTech © 2026. All Rights Reserved.</span>
+    <span>Building What's Next.</span>
+  </footer>
+
+  <!-- Contact Modal Dialog -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h2 style="font-size: 26px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px; letter-spacing: -0.5px;">Start a Conversation</h2>
+      <p style="color: #94A3B8; font-size: 15px; line-height: 1.6; margin-bottom: 32px;">Reach out directly to discuss your project engineering requirements.</p>
+
+      <div class="modal-actions">
+        <a href="https://wa.me/917907194007" target="_blank" class="modal-btn whatsapp-btn">
+          <span>Chat on WhatsApp</span>
+        </a>
+        <a href="mailto:mmidhun781@gmail.com" class="modal-btn email-btn">
+          <span>Send Direct Email</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 240 WebP Frame Canvas & Staggered Blur Reveal Engine -->
+  <script>
+    const TOTAL_FRAMES = 240;
+    const images = [];
+    let loadedCount = 0;
+    let targetFrame = 1;
+    let currentFrame = 1;
+
+    const canvas = document.getElementById('cinematic-canvas');
+    const ctx = canvas.getContext('2d');
+    const preloader = document.getElementById('preloader');
+    const loaderFill = document.getElementById('loader-fill');
+    const scrollContainer = document.getElementById('scroll-container');
+    const progressFill = document.getElementById('progress-fill');
+    const scrollCue = document.getElementById('scroll-cue');
+
+    // Canvas Elements Mapping for Staggered Hierarchy
+    const stageGroups = [
+      {
+        container: document.getElementById('stage-1'),
+        headline: document.getElementById('s1-headline'),
+        sub: document.getElementById('s1-sub'),
+        action: document.getElementById('s1-act'),
+        start: 0.00, peakStart: 0.03, peakEnd: 0.16, end: 0.23
+      },
+      {
+        container: document.getElementById('stage-2'),
+        label: document.getElementById('s2-label'),
+        headline: document.getElementById('s2-headline'),
+        sub: document.getElementById('s2-sub'),
+        start: 0.23, peakStart: 0.31, peakEnd: 0.44, end: 0.52
+      },
+      {
+        container: document.getElementById('stage-3'),
+        label: document.getElementById('s3-label'),
+        headline: document.getElementById('s3-headline'),
+        sub: document.getElementById('s3-sub'),
+        start: 0.52, peakStart: 0.60, peakEnd: 0.73, end: 0.80
+      },
+      {
+        container: document.getElementById('stage-4'),
+        label: document.getElementById('s4-label'),
+        headline: document.getElementById('s4-headline'),
+        sub: document.getElementById('s4-sub'),
+        action: document.getElementById('s4-act'),
+        start: 0.80, peakStart: 0.88, peakEnd: 0.98, end: 1.00
+      }
+    ];
+
+    // Robust 1-to-1 Canvas Fitting Engine
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      renderCurrentFrame();
+    }
+
+    // Fast Nearest-Frame Fallback Engine
+    function getBestAvailableFrame(targetIdx) {
+      if (images[targetIdx] && images[targetIdx].complete && images[targetIdx].naturalWidth > 0) {
+        return images[targetIdx];
+      }
+      // Search outwards for nearest available loaded frame
+      for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
+        const prev = targetIdx - offset;
+        const next = targetIdx + offset;
+        if (prev >= 1 && images[prev] && images[prev].complete && images[prev].naturalWidth > 0) return images[prev];
+        if (next <= TOTAL_FRAMES && images[next] && images[next].complete && images[next].naturalWidth > 0) return images[next];
+      }
+      return null;
+    }
+
+    // Render Frame with Cover Aspect Ratio
+    function drawFrame(img) {
+      if (!img || !img.complete || !img.naturalWidth) return;
+      const w = canvas.width = window.innerWidth;
+      const h = canvas.height = window.innerHeight;
+      const imgRatio = img.naturalWidth / img.naturalHeight || (16 / 9);
+      const screenRatio = w / h;
+      let drawW, drawH, offsetX, offsetY;
+
+      if (screenRatio > imgRatio) {
+        drawW = w;
+        drawH = w / imgRatio;
+        offsetX = 0;
+        offsetY = (h - drawH) / 2;
+      } else {
+        drawH = h;
+        drawW = h * imgRatio;
+        offsetX = (w - drawW) / 2;
+        offsetY = 0;
+      }
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+    }
+
+
+    function renderCurrentFrame() {
+      const idx = Math.min(Math.max(Math.round(currentFrame), 1), TOTAL_FRAMES);
+      let img = getBestAvailableFrame(idx);
+      if (!img && images[1] && images[1].complete && images[1].naturalWidth > 0) {
+        img = images[1];
+      }
+      if (img) drawFrame(img);
+    }
+
+    // High-Performance WebP Preloading Engine
+    function preloadFrames() {
+      // 1. Immediately load frame 1 and render it instantly
+      const firstFrame = new Image();
+      firstFrame.src = 'assets/frames/frame_001.webp';
+      firstFrame.onload = () => {
+        images[1] = firstFrame;
+        drawFrame(firstFrame);
+        preloader.style.opacity = '0';
+        preloader.style.visibility = 'hidden';
+      };
+
+      // Safety unlock timeout
+      setTimeout(() => {
+        preloader.style.opacity = '0';
+        preloader.style.visibility = 'hidden';
+      }, 500);
+
+      // 2. Preload all remaining frames (2 to 240) in smooth concurrent batches
+      let frameCounter = 2;
+      function loadNextBatch() {
+        if (frameCounter > TOTAL_FRAMES) return;
+        const batchEnd = Math.min(frameCounter + 12, TOTAL_FRAMES);
+
+        for (let f = frameCounter; f <= batchEnd; f++) {
+          const img = new Image();
+          const frameStr = String(f).padStart(3, '0');
+          img.src = `assets/frames/frame_${frameStr}.webp`;
+          img.onload = ((num, imgObj) => {
+            return () => {
+              images[num] = imgObj;
+              loadedCount++;
+              const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
+              loaderFill.style.width = pct + '%';
+            };
+          })(f, img);
+          img.onerror = () => { loadedCount++; };
+        }
+
+        frameCounter = batchEnd + 1;
+        setTimeout(loadNextBatch, 10);
+      }
+
+      loadNextBatch();
+    }
+
+
+
+
+    // Smooth Cubic Easing
+    function easeCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    // Smooth Staggered Element Blur + TranslateY + Opacity Interpolation
+    function animateSubElement(el, progress, inStart, inEnd, outStart, outEnd) {
+      if (!el) return;
+
+      if (progress < inStart || progress > outEnd) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(24px)';
+        el.style.filter = 'blur(6px)';
+        return;
+      }
+
+      let opacity = 0;
+      let translateY = 24;
+      let blur = 6;
+
+      if (progress < inEnd) {
+        // Entrance: opacity 0->1, translateY 24->0, blur 6->0
+        const raw = (progress - inStart) / (inEnd - inStart);
+        const e = easeCubic(Math.min(Math.max(raw, 0), 1));
+        opacity = e;
+        translateY = 24 * (1 - e);
+        blur = 6 * (1 - e);
+      } else if (progress <= outStart) {
+        // Fully Visible
+        opacity = 1;
+        translateY = 0;
+        blur = 0;
+      } else {
+        // Exit: opacity 1->0, translateY 0->-24, blur 0->6
+        const raw = (progress - outStart) / (outEnd - outStart);
+        const e = easeCubic(Math.min(Math.max(raw, 0), 1));
+        opacity = 1 - e;
+        translateY = -24 * e;
+        blur = 6 * e;
+      }
+
+      el.style.opacity = opacity.toFixed(3);
+      el.style.transform = `translateY(${translateY.toFixed(2)}px)`;
+      el.style.filter = `blur(${blur.toFixed(2)}px)`;
+    }
+
+    // Update Floating Canvas Typography Staggered Hierarchy
+    function updateStageElements(smoothProgress) {
+      stageGroups.forEach(group => {
+        const spanIn = group.peakStart - group.start;
+        const spanOut = group.end - group.peakEnd;
+
+        // Headline appears first
+        animateSubElement(group.headline, smoothProgress, group.start, group.peakStart, group.peakEnd, group.end);
+        
+        // Label / Subtitle appears +0.03 progress later (staggered delay)
+        animateSubElement(group.label, smoothProgress, group.start + 0.01, group.peakStart + 0.02, group.peakEnd, group.end);
+        animateSubElement(group.sub, smoothProgress, group.start + 0.02, group.peakStart + 0.04, group.peakEnd, group.end);
+
+        // CTA action appears +0.05 progress later
+        if (group.action) {
+          animateSubElement(group.action, smoothProgress, group.start + 0.04, group.peakStart + 0.06, group.peakEnd, group.end);
+          group.action.style.pointerEvents = (smoothProgress >= group.peakStart && smoothProgress <= group.peakEnd) ? 'auto' : 'none';
+        }
+      });
+    }
+
+    // Scroll Handler
+    function onScroll() {
+      const rect = scrollContainer.getBoundingClientRect();
+      const totalScrollable = scrollContainer.clientHeight - window.innerHeight;
+      if (totalScrollable <= 0) return;
+
+      const progress = Math.min(Math.max(-rect.top / totalScrollable, 0), 1);
+      targetFrame = 1 + progress * (TOTAL_FRAMES - 1);
+
+      // HUD Progress Fill
+      progressFill.style.height = (progress * 100).toFixed(1) + '%';
+
+      if (progress > 0.04) {
+        scrollCue.style.opacity = '0';
+      } else {
+        scrollCue.style.opacity = '1';
+      }
+    }
+
+    // Smooth 60FPS Animation Loop
+    function animationLoop() {
+      const diff = targetFrame - currentFrame;
+      if (Math.abs(diff) > 0.0001) {
+        currentFrame += diff * 0.12; // Controlled 60FPS lerp
+      } else {
+        currentFrame = targetFrame;
+      }
+      
+      renderCurrentFrame();
+
+      const smoothProgress = (currentFrame - 1) / (TOTAL_FRAMES - 1);
+      updateStageElements(smoothProgress);
+
+      requestAnimationFrame(animationLoop);
+    }
+
+
+    // Modal Helpers
+    function openModal() {
+      document.getElementById('modal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    // Modal Backdrop Close
+    document.getElementById('modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // Smooth Scroll Click Handler for Navigation Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if (!targetId || targetId === '#') return;
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          e.preventDefault();
+          const targetPos = targetEl.getBoundingClientRect().top + window.pageYOffset - 80;
+          window.scrollTo({
+            top: targetPos,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Event Listeners
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+
+    // Init
+    resizeCanvas();
+    preloadFrames();
+    onScroll();
+    requestAnimationFrame(animationLoop);
+  </script>
+</body>
+
+</html>
+
+
+

@@ -904,15 +904,10 @@
       }
     ];
 
-    // High-DPI Canvas Fitting with Transform Reset
+    // Robust 1-to-1 Canvas Fitting Engine
     function resizeCanvas() {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = window.innerWidth + 'px';
-      canvas.style.height = window.innerHeight + 'px';
-      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset scale transform matrix
-      ctx.scale(dpr, dpr);
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
       renderCurrentFrame();
     }
 
@@ -933,10 +928,10 @@
 
     // Render Frame with Cover Aspect Ratio
     function drawFrame(img) {
-      if (!img || !img.complete || img.naturalWidth === 0) return;
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const imgRatio = img.naturalWidth / img.naturalHeight;
+      if (!img || !img.complete || !img.naturalWidth) return;
+      const w = canvas.width = window.innerWidth;
+      const h = canvas.height = window.innerHeight;
+      const imgRatio = img.naturalWidth / img.naturalHeight || (16 / 9);
       const screenRatio = w / h;
       let drawW, drawH, offsetX, offsetY;
 
@@ -955,6 +950,7 @@
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
     }
+
 
     function renderCurrentFrame() {
       const idx = Math.min(Math.max(Math.round(currentFrame), 1), TOTAL_FRAMES);
