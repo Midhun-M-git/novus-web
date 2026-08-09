@@ -904,10 +904,17 @@
       }
     ];
 
-    // Robust 1-to-1 Canvas Fitting Engine
+    // High-DPI Ultra-Crisp Canvas Fitting Engine
     function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = Math.max(window.devicePixelRatio || 1, 2);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      
       renderCurrentFrame();
     }
 
@@ -926,11 +933,27 @@
       return null;
     }
 
-    // Render Frame with Cover Aspect Ratio
+    // Render High-DPI Frame with Maximum Sharpness
     function drawFrame(img) {
       if (!img || !img.complete || !img.naturalWidth) return;
-      const w = canvas.width = window.innerWidth;
-      const h = canvas.height = window.innerHeight;
+      const dpr = Math.max(window.devicePixelRatio || 1, 2);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+      }
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform matrix
+      ctx.scale(dpr, dpr);
+
+      // Enforce high quality bicubic interpolation for crystal-clear clarity
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
       const imgRatio = img.naturalWidth / img.naturalHeight || (16 / 9);
       const screenRatio = w / h;
       let drawW, drawH, offsetX, offsetY;
@@ -950,6 +973,7 @@
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
     }
+
 
 
     function renderCurrentFrame() {
