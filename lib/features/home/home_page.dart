@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_background/animated_background.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'curved_divider.dart';
+import 'video_scroll_section.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -48,41 +49,96 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // Dynamic styling based on scroll
+    final screenSize = MediaQuery.of(context).size;
     final isScrolled = _scrollOffset > 50;
     
+    // Sticky Video Scroll Track Dimensions
+    final double videoTrackHeight = screenSize.height * 2.8;
+    final double maxVideoScroll = videoTrackHeight - screenSize.height;
+    final double videoProgress = (maxVideoScroll > 0)
+        ? (_scrollOffset / maxVideoScroll).clamp(0.0, 1.0)
+        : 0.0;
+
     return Scaffold(
+      backgroundColor: const Color(0xFF0F172A),
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: ClipRRect(
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
             child: Container(
-              color: isScrolled ? Colors.white.withOpacity(0.8) : Colors.transparent,
+              color: isScrolled
+                  ? const Color(0xFF0F172A).withOpacity(0.85)
+                  : Colors.transparent,
               padding: const EdgeInsets.symmetric(horizontal: 40),
               alignment: Alignment.center,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   Text(
-                    "NovusTech",
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
-                      color: isScrolled ? const Color(0xFF0F172A) : Colors.white,
-                    ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF3B82F6).withOpacity(0.2),
+                        ),
+                        child: const Icon(
+                          Icons.stream_rounded,
+                          color: Color(0xFF60A5FA),
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        "NovusTech",
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.5,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                   Row(
                     children: [
-                      _navButton("Contact", isScrolled, () {
-                         _scrollController.animateTo(
+                      _navButton("Services", () {
+                        _scrollController.animateTo(
+                          maxVideoScroll + 100,
+                          duration: const Duration(milliseconds: 800),
+                          curve: Curves.easeInOut,
+                        );
+                      }),
+                      const SizedBox(width: 16),
+                      _navButton("Contact", () {
+                        _scrollController.animateTo(
                           _scrollController.position.maxScrollExtent,
                           duration: const Duration(seconds: 1),
                           curve: Curves.easeInOut,
                         );
                       }),
+                      const SizedBox(width: 20),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF3B82F6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        onPressed: () => _showPricingDialog(context),
+                        child: const Text(
+                          "Get Started",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ],
                   )
                 ],
@@ -102,20 +158,42 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 spawnMaxSpeed: 40.0,
                 spawnMinRadius: 2.0,
                 spawnMaxRadius: 5.0,
-                particleCount: 40,
-                spawnOpacity: 0.1,
+                particleCount: 30,
+                spawnOpacity: 0.15,
               ),
             ),
             vsync: this,
             child: const SizedBox.expand(),
           ),
 
+          // Main Scroll View
           SingleChildScrollView(
             controller: _scrollController,
             child: Column(
               children: [
-                _buildHeroSection(context),
-                const CurvedDivider(color: Colors.white, height: 60), // Smooth transition
+                // Sticky Video Scroll Track Container
+                SizedBox(
+                  height: videoTrackHeight,
+                  width: double.infinity,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: (_scrollOffset <= maxVideoScroll)
+                            ? _scrollOffset
+                            : maxVideoScroll,
+                        left: 0,
+                        right: 0,
+                        height: screenSize.height,
+                        child: VideoScrollSection(
+                          scrollProgress: videoProgress,
+                          onGetStarted: () => _showPricingDialog(context),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const CurvedDivider(color: Colors.white, height: 60),
                 _buildAboutSection(),
                 _buildServicesSection(context),
                 _buildFooter(),
@@ -127,187 +205,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _navButton(String title, bool isScrolled, VoidCallback onPressed) {
+  Widget _navButton(String title, VoidCallback onPressed) {
     return TextButton(
       onPressed: onPressed,
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 15,
           fontWeight: FontWeight.w600,
-          color: isScrolled ? const Color(0xFF0F172A) : Colors.white.withOpacity(0.9),
+          color: Colors.white.withOpacity(0.9),
         ),
       ),
     );
   }
 
-  Widget _buildHeroSection(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height, // Full screen hero
-      width: double.infinity,
-      child: Stack(
-        children: [
-          // Live Wallpaper Effect: Animated Background Image
-          Positioned.fill(
-            child: RepaintBoundary( // Optimization: Isolates repaint layer for GPU
-              child: AnimatedBuilder(
-                animation: _bgAnimationController,
-                builder: (context, child) {
-                  return Transform.scale(
-                    scale: _bgScaleAnimation.value,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("assets/images/neon.png"),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              const Color(0xFF0F172A).withOpacity(0.3), // Light overlay top
-                              const Color(0xFF0F172A).withOpacity(0.7), // Darker bottom for text
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          
-          // Centered Content
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                   AnimationConfiguration.synchronized(
-                    duration: const Duration(milliseconds: 800),
-                    child: SlideAnimation(
-                      verticalOffset: 30,
-                      child: FadeInAnimation(
-                        child: Text(
-                          "Turning Vision Into\nDigital Reality",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 64, // Big, bold typography
-                            height: 1.1,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            letterSpacing: -1.5,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black.withOpacity(0.8), // Stronger shadow
-                                offset: const Offset(0, 4),
-                                blurRadius: 15,
-                              ),
-                              Shadow(
-                                color: Colors.black.withOpacity(0.5), // Secondary shadow
-                                offset: const Offset(0, 2),
-                                blurRadius: 5,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  AnimationConfiguration.synchronized(
-                    duration: const Duration(milliseconds: 1000),
-                    child: SlideAnimation(
-                      verticalOffset: 30,
-                      child: FadeInAnimation(
-                        child: Text(
-                          "We build next-gen IoT safety systems and scalable \nmobile & web solutions for forward-thinking startups,projects and organizations.",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white.withOpacity(0.9),
-                            height: 1.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 48),
-                  
-                  // Buttons
-                  AnimationConfiguration.synchronized(
-                    duration: const Duration(milliseconds: 1200),
-                    child: FadeInAnimation(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildPrimaryButton(context, "Get Started"),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          
-          // Scroll Indicator
-          Positioned(
-            bottom: 40,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: Colors.white.withOpacity(0.6),
-                size: 40,
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
 
-  Widget _buildPrimaryButton(BuildContext context, String text) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF3B82F6).withOpacity(0.4),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-        gradient: const LinearGradient(
-          colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-        ),
-      ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-        ),
-        onPressed: () => _showPricingDialog(context),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
+
 
 
 
