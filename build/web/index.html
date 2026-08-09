@@ -1,89 +1,977 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="/">
-
+  <base href="$FLUTTER_BASE_HREF">
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description"
-    content="NovusTech: Turning Vision Into Digital Reality. Premier agency for Website Development, Mobile Apps, IoT Solutions, and Startup Consulting.">
-  <meta name="keywords"
-    content="NovusTech, IoT, App Development, Website Development, Startup Consulting, Flutter, Tech Agency">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="NovusTech: Turning Vision Into Digital Reality. Premier agency for Website Development, Mobile Apps, IoT Solutions, and Startup Consulting.">
+  <meta name="keywords" content="NovusTech, IoT, App Development, Website Development, Startup Consulting, Flutter, Tech Agency">
   <meta name="author" content="NovusTech">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://novustech.in/">
   <meta property="og:title" content="NovusTech | Digital Reality & IoT Solutions">
-  <meta property="og:description"
-    content="We build next-gen IoT safety systems and scalable mobile & web solutions for forward-thinking startups.">
+  <meta property="og:description" content="We build next-gen IoT safety systems and scalable mobile & web solutions for forward-thinking startups.">
   <meta property="og:image" content="assets/images/neon.png">
-
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:title" content="NovusTech | Digital Reality & IoT Solutions">
-  <meta property="twitter:description"
-    content="We build next-gen IoT safety systems and scalable mobile & web solutions for forward-thinking startups.">
-  <meta property="twitter:image" content="assets/images/neon.png">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="NovusTech">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png" />
-
   <title>NovusTech | Turning Vision Into Digital Reality</title>
   <link rel="manifest" href="manifest.json">
-  
-  <!-- Fonts -->
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      background-color: #0F172A;
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
-      font-family: 'Outfit', sans-serif;
     }
-    /* Modern sleek scrollbar */
+
+    body {
+      background-color: #0B0F19;
+      color: #FFFFFF;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      width: 100vw;
+    }
+
+    /* Scrollbar */
     ::-webkit-scrollbar {
-      width: 10px;
+      width: 8px;
     }
     ::-webkit-scrollbar-track {
-      background: #0F172A;
+      background: #0B0F19;
     }
     ::-webkit-scrollbar-thumb {
       background: #3B82F6;
-      border-radius: 5px;
+      border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
       background: #60A5FA;
+    }
+
+    /* Preloader */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #0B0F19;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    .spinner-ring {
+      width: 64px;
+      height: 64px;
+      border: 4px solid rgba(59, 130, 246, 0.15);
+      border-top-color: #3B82F6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      margin-top: 24px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #93C5FD;
+    }
+
+    .loader-bar {
+      width: 200px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .loader-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3B82F6, #60A5FA);
+      transition: width 0.1s ease;
+    }
+
+    /* Sticky Canvas Section */
+    #scroll-container {
+      position: relative;
+      height: 450vh; /* Smooth multi-stage scrolling track */
+      width: 100vw;
+    }
+
+    #canvas-wrapper {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    #cinematic-canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Overlay Overlay Vignette */
+    .vignette-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 40%, rgba(11, 15, 25, 0.85) 100%),
+                  linear-gradient(to bottom, rgba(11, 15, 25, 0.6) 0%, transparent 40%, rgba(11, 15, 25, 0.85) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Header Nav */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      background: rgba(11, 15, 25, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 900;
+      color: #FFFFFF;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(96, 165, 250, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #60A5FA;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .sound-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .sound-btn:hover {
+      background: rgba(59, 130, 246, 0.3);
+      border-color: #3B82F6;
+    }
+
+    .nav-btn {
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 8px 16px;
+      transition: color 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: #3B82F6;
+    }
+
+    .cta-btn {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      color: #FFFFFF;
+      border: none;
+      padding: 12px 26px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+    }
+
+    /* Content Stage Cards Floating Over Canvas */
+    .hud-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .stage-card {
+      position: absolute;
+      max-width: 900px;
+      width: 90%;
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .stage-card.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* Glassmorphism Panel */
+    .glass-panel {
+      background: rgba(11, 15, 25, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 28px;
+      padding: 48px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      text-align: left;
+    }
+
+    .hero-center {
+      text-align: center;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(96, 165, 250, 0.4);
+      color: #93C5FD;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      margin-bottom: 24px;
+    }
+
+    .stage-title {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      color: #FFFFFF;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #CBD5E1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stage-sub {
+      font-size: 19px;
+      line-height: 1.6;
+      color: #94A3B8;
+      font-weight: 400;
+      max-width: 700px;
+      margin: 0 auto 32px auto;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #E2E8F0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+    }
+
+    /* Floating Scroll Progress Meter HUD */
+    .hud-progress {
+      position: fixed;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+    }
+
+    .progress-val {
+      font-size: 12px;
+      font-weight: 800;
+      color: #60A5FA;
+      background: rgba(11, 15, 25, 0.8);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 4px 10px;
+      border-radius: 10px;
+    }
+
+    .progress-track {
+      width: 4px;
+      height: 180px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 0%;
+      background: linear-gradient(180deg, #60A5FA, #3B82F6);
+      box-shadow: 0 0 10px #3B82F6;
+      transition: height 0.1s linear;
+    }
+
+    /* Scroll Prompt */
+    .scroll-hint {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 100;
+      transition: opacity 0.4s ease;
+    }
+
+    .scroll-hint-text {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .scroll-hint-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(6px); }
+      60% { transform: translateY(3px); }
+    }
+
+    /* Services Grid Below Canvas Container */
+    .sections-wrapper {
+      position: relative;
+      z-index: 20;
+      background: #0B0F19;
+      padding: 120px 40px;
+    }
+
+    .section-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .section-tag {
+      color: #3B82F6;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .section-header {
+      font-size: 44px;
+      font-weight: 800;
+      margin-bottom: 60px;
+      letter-spacing: -1px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+    }
+
+    .service-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 36px;
+      text-align: left;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .service-card:hover {
+      background: rgba(59, 130, 246, 0.08);
+      border-color: rgba(59, 130, 246, 0.4);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+    }
+
+    .service-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60A5FA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 24px;
+    }
+
+    .service-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .service-desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #94A3B8;
+    }
+
+    /* Modal Dialog */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(12px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px;
+      width: 90%;
+      max-width: 800px;
+      padding: 40px;
+      position: relative;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-backdrop.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #FFFFFF;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .modal-btn {
+      flex: 1;
+      min-width: 200px;
+      padding: 16px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .whatsapp-btn {
+      background: #25D366;
+      color: #FFFFFF;
+    }
+
+    .email-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 40px;
+      text-align: center;
+      color: #64748B;
+      font-size: 14px;
     }
   </style>
 </head>
 
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <!-- Preloader Screen -->
+  <div id="preloader">
+    <div class="spinner-ring"></div>
+    <div class="loader-text">PRELOADING CINEMATIC ENGINE</div>
+    <div class="loader-bar">
+      <div class="loader-fill" id="loader-fill"></div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <a href="#" class="brand-logo">
+      <div class="brand-icon">⚡</div>
+      <span>NovusTech</span>
+    </a>
+    <div class="nav-actions">
+      <button class="sound-btn" id="sound-toggle">
+        <span id="sound-icon">🔇</span>
+        <span id="sound-text">Sound Off</span>
+      </button>
+      <a href="#services" class="nav-btn">Services</a>
+      <a href="#contact" class="nav-btn" onclick="openModal(); return false;">Contact</a>
+      <button class="cta-btn" onclick="openModal()">Get Started</button>
+    </div>
+  </header>
+
+  <!-- Sticky Canvas Scroll Engine -->
+  <div id="scroll-container">
+    <div id="canvas-wrapper">
+      <canvas id="cinematic-canvas"></canvas>
+      <div class="vignette-overlay"></div>
+    </div>
+
+    <!-- Floating HUD Cards -->
+    <div class="hud-overlay">
+      <!-- Stage 1 (0% - 25%) -->
+      <div class="stage-card hero-center active" id="stage-1">
+        <div class="badge-pill">⚡ PURE DYNAMIC ENGINE</div>
+        <h1 class="stage-title">Turning Vision Into<br>Digital Reality</h1>
+        <p class="stage-sub">We engineer next-gen IoT safety ecosystems, scalable web platforms, and edge AI hardware for visionary tech startups.</p>
+        <button class="cta-btn" onclick="openModal()">Explore Solutions →</button>
+      </div>
+
+      <!-- Stage 2 (25% - 50%) -->
+      <div class="stage-card" id="stage-2">
+        <div class="glass-panel">
+          <div class="badge-pill" style="color: #34D399; border-color: rgba(52, 211, 153, 0.4); background: rgba(16, 185, 129, 0.15);">
+            🧠 IOT & EDGE INTELLIGENCE
+          </div>
+          <h2 class="stage-title" style="font-size: 40px; margin-bottom: 12px;">Smart Safety & Hardware Systems</h2>
+          <p class="stage-sub" style="margin: 0 0 20px 0;">Custom PCB design, ESP32 microcontrollers, LoRaWAN wireless telemetry, and real-time cloud monitoring.</p>
+          <div class="chip-group">
+            <div class="chip"><div class="chip-dot"></div>Real-time Telemetry</div>
+            <div class="chip"><div class="chip-dot"></div>Edge AI Automation</div>
+            <div class="chip"><div class="chip-dot"></div>Custom Firmware</div>
+            <div class="chip"><div class="chip-dot"></div>Sub-second Alerts</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 3 (50% - 75%) -->
+      <div class="stage-card" id="stage-3">
+        <div class="glass-panel">
+          <div class="badge-pill" style="color: #C084FC; border-color: rgba(192, 132, 252, 0.4); background: rgba(139, 92, 246, 0.15);">
+            🚀 WEB & MOBILE ENGINEERING
+          </div>
+          <h2 class="stage-title" style="font-size: 40px; margin-bottom: 12px;">Ultra-Fast Cross-Platform Apps</h2>
+          <p class="stage-sub" style="margin: 0 0 20px 0;">Building pixel-perfect Flutter iOS & Android apps alongside high-performance Next.js cloud web architectures.</p>
+          <div class="chip-group">
+            <div class="chip"><div class="chip-dot" style="background:#C084FC;"></div>60FPS Fluid UI</div>
+            <div class="chip"><div class="chip-dot" style="background:#C084FC;"></div>iOS, Android & Web</div>
+            <div class="chip"><div class="chip-dot" style="background:#C084FC;"></div>Cloud Serverless</div>
+            <div class="chip"><div class="chip-dot" style="background:#C084FC;"></div>Bank-Grade Security</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 4 (75% - 100%) -->
+      <div class="stage-card hero-center" id="stage-4">
+        <div class="glass-panel" style="text-align: center;">
+          <div class="badge-pill">💎 STARTUP INCUBATION</div>
+          <h2 class="stage-title" style="font-size: 44px; margin-bottom: 16px;">Ready to Build Your Break-Through?</h2>
+          <p class="stage-sub" style="margin: 0 auto 28px auto;">From initial hardware prototyping to full scale enterprise production launch.</p>
+          <button class="cta-btn" style="padding: 16px 36px; font-size: 16px;" onclick="openModal()">Schedule Consultation →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HUD Progress Meter -->
+    <div class="hud-progress">
+      <div class="progress-val" id="progress-val">0%</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-hint" id="scroll-hint">
+      <span class="scroll-hint-text">SCROLL TO Scrub CINEMATIC ENGINE</span>
+      <div class="scroll-hint-icon">↓</div>
+    </div>
+  </div>
+
+  <!-- Services Grid Section -->
+  <div class="sections-wrapper" id="services">
+    <div class="section-container">
+      <div class="section-tag">OUR CAPABILITIES</div>
+      <h2 class="section-header">Engineered For Scale</h2>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">🌐</div>
+          <h3 class="service-title">Website Development</h3>
+          <p class="service-desc">Stunning, high-performance web applications built with modern frameworks and smooth canvas animations.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">📱</div>
+          <h3 class="service-title">App Development</h3>
+          <p class="service-desc">Native performance mobile apps for iOS and Android built on Flutter cross-platform architecture.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">📡</div>
+          <h3 class="service-title">IoT Solutions</h3>
+          <p class="service-desc">Smart connected hardware, sensor telemetry, edge computing, and industrial automation control systems.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">🛡️</div>
+          <h3 class="service-title">Cybersecurity</h3>
+          <p class="service-desc">Safeguarding digital infrastructure, IoT endpoints, and cloud databases with advanced security protocols.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">💡</div>
+          <h3 class="service-title">Project Mentoring</h3>
+          <p class="service-desc">Guiding engineering startups and student innovators from early proof-of-concept to production release.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">⚡</div>
+          <h3 class="service-title">Startup MVP Launch</h3>
+          <p class="service-desc">Rapid 0-to-1 prototype engineering for tech startups looking to raise capital and win early customers.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 NovusTech. Turning Vision Into Digital Reality. All Rights Reserved.</p>
+  </footer>
+
+  <!-- Modal Dialog -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 8px;">Let's Build Something Legendary</h2>
+      <p style="color: #94A3B8; font-size: 16px; margin-bottom: 24px;">Choose your preferred channel to talk with our lead engineers.</p>
+
+      <div class="modal-actions">
+        <a href="https://wa.me/917907194007" target="_blank" class="modal-btn whatsapp-btn">
+          💬 Chat on WhatsApp
+        </a>
+        <a href="mailto:mmidhun781@gmail.com" class="modal-btn email-btn">
+          ✉️ Send Direct Email
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 240 WebP Frame HTML Canvas Engine Script -->
+  <script>
+    const TOTAL_FRAMES = 240;
+    const images = [];
+    let loadedCount = 0;
+    let targetFrame = 1;
+    let currentFrame = 1;
+
+    const canvas = document.getElementById('cinematic-canvas');
+    const ctx = canvas.getContext('2d');
+    const preloader = document.getElementById('preloader');
+    const loaderFill = document.getElementById('loader-fill');
+    const scrollContainer = document.getElementById('scroll-container');
+    const progressFill = document.getElementById('progress-fill');
+    const progressVal = document.getElementById('progress-val');
+    const scrollHint = document.getElementById('scroll-hint');
+
+    const stages = [
+      document.getElementById('stage-1'),
+      document.getElementById('stage-2'),
+      document.getElementById('stage-3'),
+      document.getElementById('stage-4')
+    ];
+
+    // High-DPI Responsive Canvas Resize
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+      renderCurrentFrame();
+    }
+
+    // Preload All 240 WebP Frames
+    function preloadFrames() {
+      for (let i = 1; i <= TOTAL_FRAMES; i++) {
+        const img = new Image();
+        const frameStr = String(i).padStart(3, '0');
+        img.src = `assets/frames/frame_${frameStr}.webp`;
+        img.onload = () => {
+          loadedCount++;
+          const percent = Math.round((loadedCount / TOTAL_FRAMES) * 100);
+          loaderFill.style.width = percent + '%';
+          
+          if (loadedCount === 1) {
+            renderCurrentFrame();
+          }
+
+          if (loadedCount === TOTAL_FRAMES) {
+            setTimeout(() => {
+              preloader.style.opacity = '0';
+              preloader.style.visibility = 'hidden';
+            }, 300);
+          }
+        };
+        img.onerror = () => {
+          loadedCount++;
+        };
+        images[i] = img;
+      }
+    }
+
+    // Render Frame to Canvas with Cover Aspect Ratio
+    function drawFrame(img) {
+      if (!img || !img.complete) return;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const imgRatio = img.naturalWidth / img.naturalHeight || (16 / 9);
+      const screenRatio = w / h;
+      let drawW, drawH, offsetX, offsetY;
+
+      if (screenRatio > imgRatio) {
+        drawW = w;
+        drawH = w / imgRatio;
+        offsetX = 0;
+        offsetY = (h - drawH) / 2;
+      } else {
+        drawH = h;
+        drawW = h * imgRatio;
+        offsetX = (w - drawW) / 2;
+        offsetY = 0;
+      }
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+    }
+
+    function renderCurrentFrame() {
+      const idx = Math.min(Math.max(Math.round(currentFrame), 1), TOTAL_FRAMES);
+      drawFrame(images[idx]);
+    }
+
+    // Scroll Handler
+    function onScroll() {
+      const rect = scrollContainer.getBoundingClientRect();
+      const totalScrollable = scrollContainer.clientHeight - window.innerHeight;
+      if (totalScrollable <= 0) return;
+
+      const progress = Math.min(Math.max(-rect.top / totalScrollable, 0), 1);
+      targetFrame = 1 + progress * (TOTAL_FRAMES - 1);
+
+      // HUD Progress Update
+      const pct = Math.round(progress * 100);
+      progressFill.style.height = pct + '%';
+      progressVal.innerText = pct + '%';
+
+      if (progress > 0.05) {
+        scrollHint.style.opacity = '0';
+      } else {
+        scrollHint.style.opacity = '1';
+      }
+
+      // Stage Card Visibility Mapping
+      stages.forEach(s => s.classList.remove('active'));
+      if (progress < 0.25) {
+        stages[0].classList.add('active');
+      } else if (progress < 0.55) {
+        stages[1].classList.add('active');
+      } else if (progress < 0.80) {
+        stages[2].classList.add('active');
+      } else {
+        stages[3].classList.add('active');
+      }
+    }
+
+    // Smooth Lerp Animation Loop with requestAnimationFrame
+    function animationLoop() {
+      const diff = targetFrame - currentFrame;
+      if (Math.abs(diff) > 0.001) {
+        currentFrame += diff * 0.15; // Smooth 60FPS lerp
+        renderCurrentFrame();
+      }
+      requestAnimationFrame(animationLoop);
+    }
+
+    // Ambient Web Audio Synthesizer (Ambient Background Audio)
+    let audioCtx = null;
+    let isMuted = true;
+    let osc1, osc2, gainNode;
+
+    function toggleSound() {
+      const soundIcon = document.getElementById('sound-icon');
+      const soundText = document.getElementById('sound-text');
+
+      if (isMuted) {
+        if (!audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContext();
+
+          osc1 = audioCtx.createOscillator();
+          osc2 = audioCtx.createOscillator();
+          gainNode = audioCtx.createGain();
+
+          osc1.type = 'sine';
+          osc1.frequency.setValueAtTime(55, audioCtx.currentTime); // Low deep drone A1
+          osc2.type = 'triangle';
+          osc2.frequency.setValueAtTime(110, audioCtx.currentTime); // Warm harmonic A2
+
+          gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime); // Subtle volume
+
+          osc1.connect(gainNode);
+          osc2.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+
+          osc1.start();
+          osc2.start();
+        } else if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        gainNode.gain.setTargetAtTime(0.08, audioCtx.currentTime, 0.1);
+        isMuted = false;
+        soundIcon.innerText = '🔊';
+        soundText.innerText = 'Sound On';
+      } else {
+        if (gainNode) {
+          gainNode.gain.setTargetAtTime(0.0, audioCtx.currentTime, 0.1);
+        }
+        isMuted = true;
+        soundIcon.innerText = '🔇';
+        soundText.innerText = 'Sound Off';
+      }
+    }
+
+    document.getElementById('sound-toggle').addEventListener('click', toggleSound);
+
+    // Modal Helpers
+    function openModal() {
+      document.getElementById('modal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    // Event Listeners
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Init
+    resizeCanvas();
+    preloadFrames();
+    requestAnimationFrame(animationLoop);
+  </script>
 </body>
 
-</html>
+</html>
+
