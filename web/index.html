@@ -213,11 +213,12 @@
     .vignette-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, transparent 35%, rgba(6, 8, 13, 0.85) 100%),
-                  linear-gradient(to bottom, rgba(6, 8, 13, 0.6) 0%, transparent 40%, rgba(6, 8, 13, 0.95) 100%);
+      background: radial-gradient(circle at center, transparent 55%, rgba(6, 8, 13, 0.45) 100%),
+                  linear-gradient(to bottom, rgba(6, 8, 13, 0.3) 0%, transparent 45%, rgba(6, 8, 13, 0.6) 100%);
       pointer-events: none;
       z-index: 2;
     }
+
 
     /* Floating Canvas Typography HUD */
     .hud-overlay {
@@ -904,62 +905,81 @@
       }
     ];
 
-    // High-DPI Canvas Fitting
+    // High-DPI Canvas Fitting with Transform Reset
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = window.innerWidth + 'px';
       canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset scale transform matrix
       ctx.scale(dpr, dpr);
       renderCurrentFrame();
     }
 
     // Fast Nearest-Frame Fallback Engine
     function getBestAvailableFrame(targetIdx) {
-      if (images[targetIdx] && images[targetIdx].complete) {
+      if (images[targetIdx] && images[targetIdx].complete && images[targetIdx].naturalWidth > 0) {
         return images[targetIdx];
       }
       // Search outwards for nearest available loaded frame
       for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
         const prev = targetIdx - offset;
         const next = targetIdx + offset;
-        if (prev >= 1 && images[prev] && images[prev].complete) return images[prev];
-        if (next <= TOTAL_FRAMES && images[next] && images[next].complete) return images[next];
+        if (prev >= 1 && images[prev] && images[prev].complete && images[prev].naturalWidth > 0) return images[prev];
+        if (next <= TOTAL_FRAMES && images[next] && images[next].complete && images[next].naturalWidth > 0) return images[next];
       }
       return null;
     }
 
     // Render Frame with Cover Aspect Ratio
     function drawFrame(img) {
-      if (!img || !img.complete) return;
       const w = window.innerWidth;
       const h = window.innerHeight;
-      const imgRatio = img.naturalWidth / img.naturalHeight || (16 / 9);
-      const screenRatio = w / h;
-      let drawW, drawH, offsetX, offsetY;
 
-      if (screenRatio > imgRatio) {
-        drawW = w;
-        drawH = w / imgRatio;
-        offsetX = 0;
-        offsetY = (h - drawH) / 2;
+      if (img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+        const imgRatio = img.naturalWidth / img.naturalHeight;
+        const screenRatio = w / h;
+        let drawW, drawH, offsetX, offsetY;
+
+        if (screenRatio > imgRatio) {
+          drawW = w;
+          drawH = w / imgRatio;
+          offsetX = 0;
+          offsetY = (h - drawH) / 2;
+        } else {
+          drawH = h;
+          drawW = h * imgRatio;
+          offsetX = (w - drawW) / 2;
+          offsetY = 0;
+        }
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+
+        // Hide fallback MP4 video once canvas draws a valid WebP frame
+        const fallbackVid = document.getElementById('fallback-video');
+        if (fallbackVid && fallbackVid.style.opacity !== '0') {
+          fallbackVid.style.opacity = '0';
+        }
       } else {
-        drawH = h;
-        drawW = h * imgRatio;
-        offsetX = (w - drawW) / 2;
-        offsetY = 0;
+        // Fallback: If WebP frame is not ready, make sure MP4 video background is visible!
+        const fallbackVid = document.getElementById('fallback-video');
+        if (fallbackVid) {
+          fallbackVid.style.opacity = '1';
+        }
       }
-
-      ctx.clearRect(0, 0, w, h);
-      ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
     }
 
     function renderCurrentFrame() {
       const idx = Math.min(Math.max(Math.round(currentFrame), 1), TOTAL_FRAMES);
-      const img = getBestAvailableFrame(idx);
+      let img = getBestAvailableFrame(idx);
+      if (!img && images[1] && images[1].complete && images[1].naturalWidth > 0) {
+        img = images[1];
+      }
       drawFrame(img);
     }
+
 
 
     // Fast & Bulletproof Instant Preloader Engine
